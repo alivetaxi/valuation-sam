@@ -1,0 +1,93 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'feature**'
+  delete:
+    branches:
+      - 'feature**'
+
+env:
+  PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.PIPELINE_USER_KEY }}
+  PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.PIPELINE_USER_SECRET_KEY }}
+  SAM_TEMPLATE: template.yaml
+  DEFAULT_STACK_NAME: valuation-sam
+  DEFAULT_PIPELINE_EXECUTION_ROLE: arn:aws:iam::863606842163:role/aws-sam-cli-managed-default-p-PipelineExecutionRole-j5HwPTrVje2M
+  DEFAULT_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::863606842163:role/aws-sam-cli-managed-defau-CloudFormationExecutionRo-A5maN4lniqjf
+  DEFAULT_ARTIFACTS_BUCKET: aws-sam-cli-managed-default-pipeli-artifactsbucket-dakqk1q0dnd6
+  DEFAULT_REGION: ap-northeast-1
+
+jobs:
+  build-and-package:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Build resources
+        run: sam build --template ${SAM_TEMPLATE} --use-container
+
+      - name: Assume the default pipeline user role
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.DEFAULT_REGION }}
+          role-to-assume: ${{ env.DEFAULT_PIPELINE_EXECUTION_ROLE }}
+          role-session-name: default-packaging
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
+
+      - name: Upload artifacts to default artifact buckets
+        run: |
+          sam package \
+            --s3-bucket ${DEFAULT_ARTIFACTS_BUCKET} \
+            --region ${DEFAULT_REGION} \
+            --output-template-file packaged-default.yaml
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: packaged-default.yaml
+          path: packaged-default.yaml
+
+  deploy-default:
+    if: github.ref == 'refs/heads/main'
+    needs: [build-and-package]
+    runs-on: ubuntu-latest
+    # Configure GitHub Action Environment to have a manual approval step before deployment to production
+    # https://docs.github.com/en/actions/reference/environments
+    # environment: <configured-environment>
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+      - uses: actions/download-artifact@v3
+        with:
+          name: packaged-default.yaml
+
+      - name: Assume the default pipeline user role
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.DEFAULT_REGION }}
+          role-to-assume: ${{ env.DEFAULT_PIPELINE_EXECUTION_ROLE }}
+          role-session-name: default-deployment
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
+
+      - name: Deploy to default account
+        run: |
+          sam deploy --stack-name ${DEFAULT_STACK_NAME} \
+            --template packaged-default.yaml \
+            --capabilities CAPABILITY_IAM \
+            --region ${DEFAULT_REGION} \
+            --s3-bucket ${DEFAULT_ARTIFACTS_BUCKET} \
+            --no-fail-on-empty-changeset \
+            --role-arn ${DEFAULT_CLOUDFORMATION_EXECUTION_ROLE}
