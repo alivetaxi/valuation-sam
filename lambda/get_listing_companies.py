@@ -1,3 +1,5 @@
+""" This function gets listing companies information from TWSE. """
+
 import boto3
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +10,9 @@ table = dynamodb.Table(TABLE_NAME)
 URL = 'https://isin.twse.com.tw/isin/C_public.jsp?strMode='
 strMode = ['2', '4']
 
-def lambda_handler(event, context):
+def lambda_handler():
+    """ This is lambda handler. """
+
     companies = { company['company_id']: company for company in table.scan()['Items'] }
 
     for mode in strMode:
@@ -65,4 +69,4 @@ def lambda_handler(event, context):
             }
         )
 
-lambda_handler(None, None)
+lambda_handler()
