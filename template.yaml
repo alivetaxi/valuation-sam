@@ -53,8 +53,8 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 17 * * ? *)
-            Name: my-schedule
-            Description: Example schedule
+            Name: get-listing-companies-schedule
+            Description: Schedule for getting listing companies
             Enabled: True
   ListingCompanyTable: 
     Type: AWS::DynamoDB::Table
