@@ -30,7 +30,7 @@ def lambda_handler():
                 industry = tr.select_one(':nth-child(5)').get_text()
                 cfi_code = tr.select_one(':nth-child(6)').get_text()
 
-                if cfi_code != 'ESVUFR' or name.index('KY') >= 0 or industry == '金融保險業':
+                if cfi_code != 'ESVUFR' or name.find('KY') >= 0 or industry == '金融保險業':
                     continue
 
                 company = companies.get(co_id)
