@@ -46,7 +46,7 @@ Resources:
       Architectures:
         - x86_64
       Role: !GetAtt FunctionRole.Arn
-      Timeout: 180
+      Timeout: 300
       MemorySize: 512
       Events:
         GetListingCompanies:

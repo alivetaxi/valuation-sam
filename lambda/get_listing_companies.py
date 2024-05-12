@@ -10,7 +10,7 @@ table = dynamodb.Table(TABLE_NAME)
 URL = 'https://isin.twse.com.tw/isin/C_public.jsp?strMode='
 strMode = ['2', '4']
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # pylint: disable=unused-argument
     """ This is lambda handler. """
 
     companies = { company['company_id']: company for company in table.scan()['Items'] }
