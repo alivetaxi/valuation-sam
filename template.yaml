@@ -52,7 +52,7 @@ Resources:
         GetListingCompanies:
           Type: Schedule
           Properties:
-            Schedule: cron(0 17 * * ? *)
+            Schedule: cron(0 17 15 * ? *)
             Name: get-listing-companies-schedule
             Description: Schedule for getting listing companies
             Enabled: True
