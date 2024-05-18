@@ -106,7 +106,10 @@ def get_report(company_id, report_paths):
 
                 report[acc_code] = Decimal(acc_value)
 
-        report_table.put_item(Item = report)
+        if len(report) > 2:
+            report_table.put_item(Item = report)
+        else:
+            print(company_id + ' / ' + year_quarter + ' empty report error')
 
 def update_company_process_time(company_id):
     """ This function updates the process time of company """
