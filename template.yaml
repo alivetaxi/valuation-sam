@@ -56,6 +56,25 @@ Resources:
             Name: get-listing-companies-schedule
             Description: Schedule for getting listing companies
             Enabled: True
+  GetCompanyReportFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: lambda/
+      Handler: get_company_report.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      Role: !GetAtt FunctionRole.Arn
+      Timeout: 300
+      MemorySize: 512
+      Events:
+        GetCompanyReport:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(15 minutes)'
+            Name: get-company-report-schedule
+            Description: Schedule for getting company report
+            Enabled: True
   ListingCompanyTable: 
     Type: AWS::DynamoDB::Table
     Properties:

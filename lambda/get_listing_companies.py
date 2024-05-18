@@ -4,7 +4,7 @@ import boto3
 import requests
 from bs4 import BeautifulSoup
 
-TABLE_NAME = 'valuation-sam-ListingCompanyTable-KLJKZWB1AE8'
+TABLE_NAME = 'valuation-sam-ListingCompanyTable-LDPLI51PXXDP'
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(TABLE_NAME)
 URL = 'https://isin.twse.com.tw/isin/C_public.jsp?strMode='
