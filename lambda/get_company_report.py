@@ -116,7 +116,7 @@ def update_company_process_time(company_id):
 
     company_table.update_item(
         Key = { 'company_id': company_id },
-        UpdateExpression = "set process_time = :process_time",
+        UpdateExpression = 'set process_time = :process_time',
         ExpressionAttributeValues = { ':process_time': Decimal(time.time()) }
     )
 
