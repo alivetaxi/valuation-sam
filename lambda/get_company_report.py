@@ -1,6 +1,7 @@
 """ This function gets the report from a company. """
 
 from decimal import Decimal
+import time
 
 import boto3
 import requests
@@ -107,14 +108,25 @@ def get_report(company_id, report_paths):
 
         report_table.put_item(Item = report)
 
+def update_company_process_time(company_id):
+    """ This function updates the process time of company """
+
+    company_table.update_item(
+        Key = { 'company_id': company_id },
+        UpdateExpression = "set process_time = :process_time",
+        ExpressionAttributeValues = { ':process_time': Decimal(time.time()) }
+    )
+
 
 def lambda_handler(event, context): # pylint: disable=unused-argument
     """ This is lambda handler. """
 
-    # company_to_run = get_company_to_run()
-    reports = get_report_records('1101')
-    report_paths = get_report_paths('1101', reports)
+    company_to_run = get_company_to_run()
+    reports = get_report_records(company_to_run['company_id'])
+    report_paths = get_report_paths(company_to_run['company_id'], reports)
     if len(report_paths) > 0:
-        get_report('1101', report_paths)
+        get_report(company_to_run['company_id'], report_paths)
+
+    update_company_process_time(company_to_run['company_id'])
 
 lambda_handler(None, None)
