@@ -166,6 +166,15 @@ def calculate_company_ratio(curr, beg, last):
     return ratio
 
 
+def get_report_by_year_quarter(reports, year, quarter):
+    """This function get report by year and quarter."""
+
+    return next(
+        (r for r in reports if r["year_quarter"] == (str(year) + "Q" + str(quarter))),
+        None,
+    )
+
+
 def calculate_company_latest_ratio(company_id):
     """This function calculate financial ratios for the last 3 years."""
 
@@ -184,41 +193,19 @@ def calculate_company_latest_ratio(company_id):
     )["Items"]
 
     curr_ratio = calculate_company_ratio(
-        next(
-            r for r in reports if r["year_quarter"] == (str(year) + "Q" + str(quarter))
-        ),
-        next(r for r in reports if r["year_quarter"] == (str(year - 1) + "Q4")),
-        next(
-            r
-            for r in reports
-            if r["year_quarter"] == (str(year - 1) + "Q" + str(quarter))
-        ),
+        get_report_by_year_quarter(reports, year, quarter),
+        get_report_by_year_quarter(reports, year - 1, 4),
+        get_report_by_year_quarter(reports, year - 1, quarter),
     )
     last_ratio = calculate_company_ratio(
-        next(
-            r
-            for r in reports
-            if r["year_quarter"] == (str(year - 1) + "Q" + str(quarter))
-        ),
-        next(r for r in reports if r["year_quarter"] == (str(year - 2) + "Q4")),
-        next(
-            r
-            for r in reports
-            if r["year_quarter"] == (str(year - 2) + "Q" + str(quarter))
-        ),
+        get_report_by_year_quarter(reports, year - 1, quarter),
+        get_report_by_year_quarter(reports, year - 2, 4),
+        get_report_by_year_quarter(reports, year - 2, quarter),
     )
     last2_ratio = calculate_company_ratio(
-        next(
-            r
-            for r in reports
-            if r["year_quarter"] == (str(year - 2) + "Q" + str(quarter))
-        ),
-        next(r for r in reports if r["year_quarter"] == (str(year - 3) + "Q4")),
-        next(
-            r
-            for r in reports
-            if r["year_quarter"] == (str(year - 3) + "Q" + str(quarter))
-        ),
+        get_report_by_year_quarter(reports, year - 2, quarter),
+        get_report_by_year_quarter(reports, year - 3, 4),
+        get_report_by_year_quarter(reports, year - 3, quarter),
     )
 
     if curr_ratio is None or last_ratio is None or last2_ratio is None:
