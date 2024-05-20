@@ -144,15 +144,16 @@ def calculate_company_ratio(curr, beg, last):
     ratio["last_fcf"] = last_fcf
     ratio["move_fcf"] = curr_fcf + beg_fcf - last_fcf
     ratio["capital"] = (
-        (curr["2100"] or 0)
-        + (curr["2110"] or 0)
-        + (curr["2280"] or 0)
-        + (curr["2320"] or 0)
-        + (curr["2530"] or 0)
-        + (curr["2540"] or 0)
-        + (curr["2580"] or 0)
+        curr.get("2100", 0)
+        + curr.get("2110", 0)
+        + curr.get("2280", 0)
+        + curr.get("2320", 0)
+        + curr.get("2530", 0)
+        + curr.get("2540", 0)
+        + curr.get("2580", 0)
         + curr["3XXX"]
     )
+
     ratio["return_of_capital"] = ratio["move_fcf"] * 100 / ratio["capital"]
 
     return ratio
