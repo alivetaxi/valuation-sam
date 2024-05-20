@@ -110,6 +110,7 @@ def get_report(company_id, report_paths):
             report_table.put_item(Item = report)
         else:
             print(company_id + ' / ' + year_quarter + ' empty report error')
+            print(resp.text)
 
 def update_company_process_time(company_id):
     """ This function updates the process time of company """
