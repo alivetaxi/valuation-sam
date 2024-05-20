@@ -219,7 +219,7 @@ def calculate_company_latest_ratio(company_id):
             * (last_ratio["return_of_capital"] / 100 + 1)
             * (last2_ratio["return_of_capital"] / 100 + 1)
         )
-        ** (1 / 3)
+        ** Decimal(1 / 3)
         - 1
     ) * 100
 
