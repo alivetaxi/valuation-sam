@@ -177,39 +177,39 @@ def calculate_company_latest_ratio(company_id):
 
     curr_ratio = calculate_company_ratio(
         next(
-            r for r in reports if r["year_quauter"] == (str(year) + "Q" + str(quarter))
+            r for r in reports if r["year_quarter"] == (str(year) + "Q" + str(quarter))
         ),
-        next(r for r in reports if r["year_quauter"] == (str(year - 1) + "Q4")),
+        next(r for r in reports if r["year_quarter"] == (str(year - 1) + "Q4")),
         next(
             r
             for r in reports
-            if r["year_quauter"] == (str(year - 1) + "Q" + str(quarter))
+            if r["year_quarter"] == (str(year - 1) + "Q" + str(quarter))
         ),
     )
     last_ratio = calculate_company_ratio(
         next(
             r
             for r in reports
-            if r["year_quauter"] == (str(year - 1) + "Q" + str(quarter))
+            if r["year_quarter"] == (str(year - 1) + "Q" + str(quarter))
         ),
-        next(r for r in reports if r["year_quauter"] == (str(year - 2) + "Q4")),
+        next(r for r in reports if r["year_quarter"] == (str(year - 2) + "Q4")),
         next(
             r
             for r in reports
-            if r["year_quauter"] == (str(year - 2) + "Q" + str(quarter))
+            if r["year_quarter"] == (str(year - 2) + "Q" + str(quarter))
         ),
     )
     last2_ratio = calculate_company_ratio(
         next(
             r
             for r in reports
-            if r["year_quauter"] == (str(year - 2) + "Q" + str(quarter))
+            if r["year_quarter"] == (str(year - 2) + "Q" + str(quarter))
         ),
-        next(r for r in reports if r["year_quauter"] == (str(year - 3) + "Q4")),
+        next(r for r in reports if r["year_quarter"] == (str(year - 3) + "Q4")),
         next(
             r
             for r in reports
-            if r["year_quauter"] == (str(year - 3) + "Q" + str(quarter))
+            if r["year_quarter"] == (str(year - 3) + "Q" + str(quarter))
         ),
     )
 
