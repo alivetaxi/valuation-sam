@@ -115,6 +115,9 @@ def get_report(company_id, report_paths):
                 if acc_value.startswith("("):
                     acc_value = "-" + acc_value[1 : len(acc_value) - 1]
 
+                if not acc_value:
+                    continue
+
                 report[acc_code] = Decimal(acc_value)
 
         if len(report) > 2:
@@ -129,16 +132,20 @@ def calculate_company_ratio(curr, beg, last):
 
     if curr is None or beg is None or last is None:
         return None
-    if curr["1XXX"] is None or beg["1XXX"] is None or last["1XXX"] is None:
+    if (
+        curr.get("1XXX", None) is None
+        or beg.get("1XXX", None) is None
+        or last.get("1XXX", None) is None
+    ):
         return None
 
     ratio = {}
     ratio["company_id"] = curr["company_id"]
     ratio["year_quarter"] = curr["year_quarter"]
 
-    curr_fcf = curr["AAAA"] + (curr["B02700"] or 0)
-    beg_fcf = beg["AAAA"] + (beg["B02700"] or 0)
-    last_fcf = last["AAAA"] + (last["B02700"] or 0)
+    curr_fcf = curr["AAAA"] + curr.get("B02700", 0)
+    beg_fcf = beg["AAAA"] + beg.get("B02700", 0)
+    last_fcf = last["AAAA"] + last.get("B02700", 0)
     ratio["curr_fcf"] = curr_fcf
     ratio["beg_fcf"] = beg_fcf
     ratio["last_fcf"] = last_fcf
